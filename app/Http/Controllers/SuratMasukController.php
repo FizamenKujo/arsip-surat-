@@ -9,9 +9,20 @@ use Illuminate\Support\Facades\Storage;
 
 class SuratMasukController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $suratMasuk = SuratMasuk::latest()->paginate(10);
+        $query = SuratMasuk::latest();
+
+        if ($request->has('search')) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('no_surat', 'like', "%{$search}%")
+                    ->orWhere('pengirim', 'like', "%{$search}%")
+                    ->orWhere('perihal', 'like', "%{$search}%");
+            });
+        }
+
+        $suratMasuk = $query->paginate(10);
         return view('surat-masuk.index', compact('suratMasuk'));
     }
 
@@ -31,7 +42,7 @@ class SuratMasukController extends Controller
         ]);
 
         if ($request->hasFile('file')) {
-            $validated['file_path'] = $request->file('file')->store('surat-masuk');
+            $validated['file_path'] = $request->file('file')->store('surat-masuk', 'public');
         }
 
         $validated['user_id'] = Auth::id();
@@ -40,5 +51,10 @@ class SuratMasukController extends Controller
         SuratMasuk::create($validated);
 
         return redirect()->route('surat-masuk.index')->with('success', 'Surat Masuk berhasil dicatat');
+    }
+    public function show($id)
+    {
+        $surat = SuratMasuk::findOrFail($id);
+        return view('surat-masuk.show', compact('surat'));
     }
 }

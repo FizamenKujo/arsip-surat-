@@ -8,9 +8,19 @@ use Illuminate\Support\Facades\Hash;
 
 class PetugasController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $petugas = User::where('role', 'petugas')->latest()->paginate(10);
+        $query = User::where('role', 'petugas');
+
+        if ($request->has('search')) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('nip', 'like', "%{$search}%")
+                    ->orWhere('name', 'like', "%{$search}%");
+            });
+        }
+
+        $petugas = $query->latest()->paginate(10);
         return view('petugas.index', compact('petugas'));
     }
 

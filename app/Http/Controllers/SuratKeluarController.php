@@ -8,9 +8,20 @@ use Illuminate\Support\Facades\Auth;
 
 class SuratKeluarController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $suratKeluar = SuratKeluar::latest()->paginate(10);
+        $query = SuratKeluar::latest();
+
+        if ($request->has('search')) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('no_surat', 'like', "%{$search}%")
+                    ->orWhere('tujuan', 'like', "%{$search}%")
+                    ->orWhere('perihal', 'like', "%{$search}%");
+            });
+        }
+
+        $suratKeluar = $query->paginate(10);
         return view('surat-keluar.index', compact('suratKeluar'));
     }
 
@@ -30,7 +41,7 @@ class SuratKeluarController extends Controller
         ]);
 
         if ($request->hasFile('file')) {
-            $validated['file_path'] = $request->file('file')->store('surat-keluar');
+            $validated['file_path'] = $request->file('file')->store('surat-keluar', 'public');
         }
 
         $validated['user_id'] = Auth::id();
@@ -39,5 +50,10 @@ class SuratKeluarController extends Controller
         SuratKeluar::create($validated);
 
         return redirect()->route('surat-keluar.index')->with('success', 'Surat Keluar berhasil dicatat');
+    }
+    public function show($id)
+    {
+        $surat = SuratKeluar::findOrFail($id);
+        return view('surat-keluar.show', compact('surat'));
     }
 }
