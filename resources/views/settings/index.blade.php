@@ -13,19 +13,40 @@
                             Perbarui informasi profil akun dan alamat email Anda.
                         </p>
                     </header>
-                    <div class="mt-6 space-y-6">
+                    <form method="post" action="{{ route('settings.update-profile') }}" class="mt-6 space-y-6">
+                        @csrf
+                        @method('put')
+
                         <div>
                             <x-input-label for="name" :value="__('Nama')" />
-                            <x-text-input id="name" name="name" type="text" class="mt-1 block w-full"
-                                :value="Auth::user()->name" disabled />
+                            <x-text-input id="name" name="name" type="text" class="mt-1 block w-full" :value="old('name', Auth::user()->name)" required autofocus autocomplete="name" />
+                            @error('name')
+                                <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
+                            @enderror
                         </div>
+
                         <div>
                             <x-input-label for="email" :value="__('Email')" />
-                            <x-text-input id="email" name="email" type="email" class="mt-1 block w-full"
-                                :value="Auth::user()->email" disabled />
+                            <x-text-input id="email" name="email" type="email" class="mt-1 block w-full" :value="old('email', Auth::user()->email)" required autocomplete="username" />
+                            @error('email')
+                                <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
+                            @enderror
                         </div>
-                        <p class="text-sm text-gray-500 italic">*Hubungi administrator untuk mengubah data profil.</p>
-                    </div>
+
+                        <div class="flex items-center gap-4">
+                            <x-primary-button>{{ __('Simpan') }}</x-primary-button>
+
+                            @if (session('status') === 'profile-updated')
+                                <p
+                                    x-data="{ show: true }"
+                                    x-show="show"
+                                    x-transition
+                                    x-init="setTimeout(() => show = false, 2000)"
+                                    class="text-sm text-gray-600"
+                                >{{ __('Tersimpan.') }}</p>
+                            @endif
+                        </div>
+                    </form>
                 </section>
             </div>
         </div>
@@ -41,26 +62,46 @@
                             Pastikan akun Anda menggunakan password yang aman.
                         </p>
                     </header>
-                    <form method="post" action="#" class="mt-6 space-y-6">
+                    <form method="post" action="{{ route('settings.update-password') }}" class="mt-6 space-y-6">
                         @csrf
                         @method('put')
+
                         <div>
                             <x-input-label for="current_password" :value="__('Password Saat Ini')" />
-                            <x-text-input id="current_password" name="current_password" type="password"
-                                class="mt-1 block w-full" autocomplete="current-password" />
+                            <x-text-input id="current_password" name="current_password" type="password" class="mt-1 block w-full" autocomplete="current-password" />
+                            @error('current_password')
+                                <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
+                            @enderror
                         </div>
+
                         <div>
                             <x-input-label for="password" :value="__('Password Baru')" />
-                            <x-text-input id="password" name="password" type="password" class="mt-1 block w-full"
-                                autocomplete="new-password" />
+                            <x-text-input id="password" name="password" type="password" class="mt-1 block w-full" autocomplete="new-password" />
+                            @error('password')
+                                <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
+                            @enderror
                         </div>
+
                         <div>
                             <x-input-label for="password_confirmation" :value="__('Konfirmasi Password Baru')" />
-                            <x-text-input id="password_confirmation" name="password_confirmation" type="password"
-                                class="mt-1 block w-full" autocomplete="new-password" />
+                            <x-text-input id="password_confirmation" name="password_confirmation" type="password" class="mt-1 block w-full" autocomplete="new-password" />
+                            @error('password_confirmation')
+                                <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
+                            @enderror
                         </div>
+
                         <div class="flex items-center gap-4">
                             <x-primary-button>{{ __('Simpan') }}</x-primary-button>
+
+                            @if (session('status') === 'password-updated')
+                                <p
+                                    x-data="{ show: true }"
+                                    x-show="show"
+                                    x-transition
+                                    x-init="setTimeout(() => show = false, 2000)"
+                                    class="text-sm text-gray-600"
+                                >{{ __('Tersimpan.') }}</p>
+                            @endif
                         </div>
                     </form>
                 </section>

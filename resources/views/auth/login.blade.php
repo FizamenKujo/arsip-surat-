@@ -14,16 +14,16 @@
             <form method="POST" action="{{ route('login') }}" class="space-y-6">
                 @csrf
 
-                <!-- NIP -->
+                <!-- Login ID (NIP or Email) -->
                 <div>
-                    <label for="nip" class="block text-sm font-medium text-gray-700">NIP (Nomor Induk Pegawai)</label>
+                    <label for="login_id" class="block text-sm font-medium text-gray-700">NIP / Email</label>
                     <div class="mt-1 relative rounded-md shadow-sm">
                         <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                             <svg class="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V5a2 2 0 114 0v1m-4 0a2 2 0 104 0m-5 8a2 2 0 100-4 2 2 0 000 4zm0 0c1.306 0 2.417.835 2.83 2M9 14a3.001 3.001 0 00-2.83 2M15 11h3m-3 4h2"/></svg>
                         </div>
-                        <input id="nip" class="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:border-blue-500 focus:ring-blue-500 sm:text-sm" type="text" name="nip" :value="old('nip')" required autofocus placeholder="Contoh: 19900101 202001 1 001" />
+                        <input id="login_id" class="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:border-blue-500 focus:ring-blue-500 sm:text-sm" type="text" name="login_id" :value="old('login_id')" required autofocus placeholder="Masukkan NIP atau Email" />
                     </div>
-                    @error('nip')
+                    @error('login_id')
                         <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
                     @enderror
                 </div>

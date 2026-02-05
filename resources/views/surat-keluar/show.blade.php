@@ -2,101 +2,70 @@
     <x-slot name="header">Detail Surat Keluar</x-slot>
 
     <div class="max-w-4xl mx-auto">
-        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
-            <div class="flex justify-between items-start mb-6">
-                <h2 class="text-xl font-bold text-gray-900">Informasi Surat Keluar</h2>
-                <div class="flex gap-2">
-                    <span class="px-3 py-1 rounded-full text-xs font-bold bg-blue-100 text-blue-800">
-                        {{ ucfirst($surat->status ?? 'Draft') }}
-                    </span>
-                </div>
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <div class="space-y-6">
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+            <div class="p-8">
+                <div class="flex justify-between items-start mb-6">
                     <div>
-                        <p class="text-sm font-medium text-gray-500 mb-1">Nomor Surat</p>
-                        <p class="text-lg font-bold text-gray-900">{{ $surat->no_surat }}</p>
+                        <h2 class="text-2xl font-bold text-gray-900">{{ $surat->perihal }}</h2>
+                        <p class="text-sm text-gray-500 mt-1">No. Surat: <span class="font-mono text-gray-700 bg-gray-100 px-2 py-0.5 rounded">{{ $surat->no_surat }}</span></p>
                     </div>
+                    <span class="px-3 py-1 text-sm font-semibold text-green-700 bg-green-100 rounded-full">Surat Keluar</span>
+                </div>
 
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
                     <div>
-                        <p class="text-sm font-medium text-gray-500 mb-1">Tujuan Instansi</p>
+                        <h4 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Tujuan Surat</h4>
                         <div class="flex items-center gap-3">
-                            <span
-                                class="w-10 h-10 rounded-lg bg-green-50 flex items-center justify-center text-green-600 font-bold">
+                            <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold">
                                 {{ substr($surat->tujuan, 0, 1) }}
-                            </span>
-                            <p class="text-base text-gray-900">{{ $surat->tujuan }}</p>
-                        </div>
-                    </div>
-
-                    <div>
-                        <p class="text-sm font-medium text-gray-500 mb-1">Tanggal Surat</p>
-                        <p class="text-base text-gray-900">
-                            {{ \Carbon\Carbon::parse($surat->tanggal_surat)->format('d F Y') }}</p>
-                    </div>
-                </div>
-
-                <div class="space-y-6">
-                    <div>
-                        <p class="text-sm font-medium text-gray-500 mb-1">Perihal</p>
-                        <p class="text-base text-gray-900 leading-relaxed">{{ $surat->perihal }}</p>
-                    </div>
-
-                    <div>
-                        <p class="text-sm font-medium text-gray-500 mb-1">Diinput Oleh</p>
-                        <div class="flex items-center gap-3 bg-gray-50 p-3 rounded-lg">
-                            <div class="flex-1">
-                                <p class="text-sm font-bold text-gray-900">{{ $surat->user->name }}</p>
-                                <p class="text-xs text-gray-500">NIP. {{ $surat->user->nip }}</p>
                             </div>
-                            <span class="px-2 py-1 bg-white rounded text-xs border border-gray-200 text-gray-500">
-                                {{ $surat->user->role }}
-                            </span>
+                            <div>
+                                <p class="text-gray-900 font-medium">{{ $surat->tujuan }}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <h4 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Informasi Tanggal</h4>
+                        <p class="text-sm text-gray-600">Tanggal Surat: <span class="font-medium text-gray-900">{{ $surat->tanggal_surat }}</span></p>
+                        <p class="text-sm text-gray-600 mt-1">Dibuat Pada: <span class="font-medium text-gray-900">{{ $surat->created_at->format('d M Y H:i') }}</span></p>
+                    </div>
+                </div>
+
+                <div class="mb-8">
+                    <h4 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Diinput Oleh</h4>
+                    <div class="flex items-center gap-3">
+                         <img class="h-8 w-8 rounded-full bg-gray-300" src="https://ui-avatars.com/api/?name={{ urlencode($surat->user->name) }}&background=random" alt="">
+                        <div>
+                            <p class="text-sm font-medium text-gray-900">{{ $surat->user->name }}</p>
+                            <p class="text-xs text-gray-500">{{ ucfirst($surat->user->role) }}</p>
                         </div>
                     </div>
                 </div>
+
+                @if($surat->file_path)
+                    <div class="border rounded-xl overflow-hidden">
+                        <div class="bg-gray-50 px-4 py-3 border-b flex justify-between items-center">
+                            <span class="text-sm font-medium text-gray-700">Preview Dokumen</span>
+                            <a href="{{ asset('storage/' . $surat->file_path) }}" target="_blank" class="text-sm text-blue-600 hover:text-blue-700 font-medium">Download / Buka Full</a>
+                        </div>
+                        <div class="bg-gray-200 aspect-[4/3] flex items-center justify-center">
+                            @if(Str::endsWith($surat->file_path, '.pdf'))
+                                <iframe src="{{ asset('storage/' . $surat->file_path) }}" class="w-full h-full"></iframe>
+                            @else
+                                <img src="{{ asset('storage/' . $surat->file_path) }}" class="object-contain max-h-full" alt="Surat Image">
+                            @endif
+                        </div>
+                    </div>
+                @else
+                    <div class="p-4 bg-yellow-50 text-yellow-700 rounded-lg text-sm text-center">
+                        Tidak ada file lampiran yang diupload untuk surat ini.
+                    </div>
+                @endif
             </div>
 
-            @if($surat->file_path)
-                <div class="mt-8 pt-8 border-t border-gray-100">
-                    <p class="text-sm font-medium text-gray-500 mb-4">Dokumen Lampiran</p>
-                    <div class="flex items-center gap-4 p-4 bg-gray-50 rounded-xl border border-gray-100">
-                        <div class="p-3 bg-blue-100 text-blue-600 rounded-lg">
-                            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 011.414.586l5.414 5.414a1 1 0 01.586 1.414V19a2 2 0 01-2 2z">
-                                </path>
-                            </svg>
-                        </div>
-                        <div class="flex-1">
-                            <p class="text-sm font-bold text-gray-900">File Surat Keluar</p>
-                            <p class="text-xs text-gray-500">Klik tombol di kanan untuk melihat atau mengunduh</p>
-                        </div>
-                        <a href="{{ Storage::url($surat->file_path) }}" target="_blank"
-                            class="px-4 py-2 bg-white text-blue-600 text-sm font-medium rounded-lg border border-gray-200 hover:bg-blue-50 transition flex items-center gap-2">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z">
-                                </path>
-                            </svg>
-                            Lihat File
-                        </a>
-                    </div>
-                </div>
-            @endif
-
-            <div class="mt-8 pt-6 border-t border-gray-100 flex justify-end">
-                <a href="{{ route('surat-keluar.index') }}"
-                    class="px-6 py-2.5 bg-gray-900 text-white text-sm font-medium rounded-lg hover:bg-gray-800 transition flex items-center gap-2">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
-                    </svg>
-                    Kembali
-                </a>
+            <div class="bg-gray-50 px-8 py-4 border-t border-gray-100 flex justify-end gap-3">
+                <a href="{{ route('surat-keluar.index') }}" class="px-4 py-2 bg-white border border-gray-300 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-50">Kembali</a>
+                 <a href="{{ route('surat-keluar.edit', $surat->id) }}" class="px-4 py-2 bg-yellow-400 text-yellow-900 border border-yellow-500 text-sm font-medium rounded-lg hover:bg-yellow-500">Edit Surat</a>
             </div>
         </div>
     </div>

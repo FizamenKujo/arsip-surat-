@@ -27,4 +27,6 @@ Route::middleware('auth')->group(function () {
     Route::resource('surat-masuk', SuratMasukController::class);
     Route::resource('surat-keluar', SuratKeluarController::class);
     Route::get('/settings', [SettingsController::class, 'index'])->name('settings.index');
+    Route::put('/settings/profile', [SettingsController::class, 'updateProfile'])->name('settings.update-profile');
+    Route::put('/settings/password', [SettingsController::class, 'updatePassword'])->name('settings.update-password');
 });

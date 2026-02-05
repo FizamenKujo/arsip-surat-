@@ -38,7 +38,7 @@ class SuratMasukController extends Controller
             'pengirim' => 'required',
             'perihal' => 'required',
             'tanggal_terima' => 'required|date',
-            'file' => 'nullable|file|mimes:pdf,jpg,png|max:2048',
+            'file' => 'nullable|file|mimes:pdf,jpg,png|max:5120',
         ]);
 
         if ($request->hasFile('file')) {
@@ -56,5 +56,47 @@ class SuratMasukController extends Controller
     {
         $surat = SuratMasuk::findOrFail($id);
         return view('surat-masuk.show', compact('surat'));
+    }
+    public function edit($id)
+    {
+        $surat = SuratMasuk::findOrFail($id);
+        return view('surat-masuk.edit', compact('surat'));
+    }
+
+    public function update(Request $request, $id)
+    {
+        $surat = SuratMasuk::findOrFail($id);
+        
+        $validated = $request->validate([
+            'no_surat' => 'required|unique:surat_masuks,no_surat,'.$surat->id,
+            'pengirim' => 'required',
+            'perihal' => 'required',
+            'tanggal_terima' => 'required|date',
+            'file' => 'nullable|file|mimes:pdf,jpg,png|max:5120',
+        ]);
+
+        if ($request->hasFile('file')) {
+            if ($surat->file_path) {
+                Storage::disk('public')->delete($surat->file_path);
+            }
+            $validated['file_path'] = $request->file('file')->store('surat-masuk', 'public');
+        }
+
+        $surat->update($validated);
+
+        return redirect()->route('surat-masuk.index')->with('success', 'Surat Masuk berhasil diperbarui');
+    }
+
+    public function destroy($id)
+    {
+        $surat = SuratMasuk::findOrFail($id);
+        
+        if ($surat->file_path) {
+            Storage::disk('public')->delete($surat->file_path);
+        }
+        
+        $surat->delete();
+
+        return redirect()->route('surat-masuk.index')->with('success', 'Surat Masuk berhasil dihapus');
     }
 }

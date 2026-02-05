@@ -14,10 +14,17 @@ class AuthController extends Controller
 
     public function login(Request $request)
     {
-        $credentials = $request->validate([
-            'nip' => ['required', 'string'],
+        $request->validate([
+            'login_id' => ['required', 'string'],
             'password' => ['required'],
         ]);
+
+        $login_type = filter_var($request->login_id, FILTER_VALIDATE_EMAIL) ? 'email' : 'nip';
+
+        $credentials = [
+            $login_type => $request->login_id,
+            'password' => $request->password
+        ];
 
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
@@ -25,8 +32,8 @@ class AuthController extends Controller
         }
 
         return back()->withErrors([
-            'nip' => 'NIP atau password salah.',
-        ])->onlyInput('nip');
+            'login_id' => 'Login details are not valid.',
+        ])->onlyInput('login_id');
     }
 
     public function logout(Request $request)

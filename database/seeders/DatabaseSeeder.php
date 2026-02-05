@@ -12,7 +12,7 @@ class DatabaseSeeder extends Seeder
     {
         // Admin
         User::create([
-            'nip' => '1985032020011001', // Matching screenshot roughly
+            'nip' => null,
             'name' => 'Budi Santoso',
             'email' => 'admin@inspect.com',
             'role' => 'admin',

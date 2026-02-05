@@ -39,7 +39,7 @@
                                     <p class="pl-1" x-show="!fileName">atau drag and drop</p>
                                 </div>
                                 <p class="text-sm text-gray-900 font-bold" x-text="fileName"></p>
-                                <p class="text-xs text-gray-500">PDF, PNG, JPG up to 2MB</p>
+                                <p class="text-xs text-gray-500">PDF, PNG, JPG up to 5MB</p>
                             </div>
                         </div>
                     </div>
